@@ -1,8 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// CONFIGURAÇÃO ENTITY FRAMEWORK COM ORACLE
+var connectionString = builder.Configuration.GetConnectionString("OracleConnection");
+
+builder.Services.AddDbContext<SpaceCare.Infra.Data.AppDbContext>(options =>
+    options.UseOracle(connectionString));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
