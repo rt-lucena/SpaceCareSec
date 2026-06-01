@@ -32,14 +32,27 @@ namespace SpaceCare.Services
             return turista;
         }
 
-        public async Task<List<Turista>> ListarTuristas()
+        public async Task<List<ListagemTurista>> ListarTuristas()
         {
-            return await _context.Turistas.ToListAsync();
+            return await _context.Turistas
+                .Select(t => new ListagemTurista(t.Id, t.Nome, t.Email))
+                .ToListAsync();
         }
 
-        public async Task<Turista?> DetalharTurista(int id)
+        public async Task<DetalharTurista?> DetalharTurista(int id)
         {
-            return await _context.Turistas.FindAsync(id);
+            var turista = await _context.Turistas.FindAsync(id);
+            if (turista == null) return null;
+
+            return new DetalharTurista(
+                Id: turista.Id,
+                Nome: turista.Nome,
+                PassaporteEspacial: turista.PassaporteEspacial,
+                DataNascimento: turista.DataNascimento,
+                Email: turista.Email,
+                HistoricoMedico: turista.HistoricoMedico,
+                DataCadastro: turista.DataCadastro
+            );
         }
     }
 }
