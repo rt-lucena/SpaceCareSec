@@ -25,6 +25,11 @@ namespace SpaceCare.Domain.Turistas
         [Column("DT_NASCIMENTO")]
         public DateTime DataNascimento { get; set; }
 
+        [Required]
+        [StringLength(150)]
+        [Column("EMAIL")]
+        public string Email { get; set; } = string.Empty;
+
         [StringLength(250)]
         [Column("HISTORICO_MEDICO")]
         public string? HistoricoMedico { get; set; }

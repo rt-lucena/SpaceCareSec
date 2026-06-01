@@ -16,6 +16,11 @@ namespace SpaceCare.Domain.Turistas.Dtos
         [DataType(DataType.Date, ErrorMessage = "Formato de data inválido.")]
         public DateTime DataNascimento { get; set; }
 
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
+        [EmailAddress(ErrorMessage = "O formato do e-mail digitado é inválido.")]
+        [StringLength(150, ErrorMessage = "O e-mail não pode passar de {1} caracteres.")]
+        public string Email { get; set; } = string.Empty;
+
         [StringLength(250, ErrorMessage = "O histórico médico pode ter no máximo {1} caracteres.")]
         public string? HistoricoMedico { get; set; }
     }

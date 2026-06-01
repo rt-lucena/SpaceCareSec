@@ -21,6 +21,7 @@ namespace SpaceCare.Services
                 Nome = dados.Nome,
                 PassaporteEspacial = dados.PassaporteEspacial,
                 DataNascimento = dados.DataNascimento,
+                Email = dados.Email,
                 HistoricoMedico = dados.HistoricoMedico,
                 DataCadastro = DateTime.UtcNow
             };

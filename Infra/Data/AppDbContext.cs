@@ -18,6 +18,10 @@ namespace SpaceCare.Infra.Data
             modelBuilder.Entity<Turista>()
                 .HasIndex(t => t.PassaporteEspacial)
                 .IsUnique();
+
+            modelBuilder.Entity<Turista>()
+                .HasIndex(t => t.Email)
+                .IsUnique();
         }
     }
 }
