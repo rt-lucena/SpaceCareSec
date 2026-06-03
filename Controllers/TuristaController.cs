@@ -17,7 +17,7 @@ namespace SpaceCare.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CadastrarTurista([FromBody] CadastroTuristaDto dados)
+        public async Task<IActionResult> CadastrarTurista([FromBody] CadastrarTurista dados)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

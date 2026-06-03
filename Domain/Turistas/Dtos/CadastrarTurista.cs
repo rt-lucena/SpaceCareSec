@@ -2,7 +2,7 @@
 
 namespace SpaceCare.Domain.Turistas.Dtos
 {
-    public class CadastroTuristaDto
+    public class CadastrarTurista
     {
         [Required(ErrorMessage = "O nome do turista é obrigatório.")]
         [StringLength(100, ErrorMessage = "O nome não pode passar de {1} caracteres.")]

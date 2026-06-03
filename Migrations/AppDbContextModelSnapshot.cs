@@ -115,7 +115,7 @@ namespace SpaceCare.Migrations
                     b.HasIndex("PassaporteEspacial")
                         .IsUnique();
 
-                    b.ToTable("SC_TURISTAS");
+                    b.ToTable("SC_TURISTAS", (string)null);
                 });
 
             modelBuilder.Entity("SpaceCare.Domain.Telemetrias.Telemetria", b =>

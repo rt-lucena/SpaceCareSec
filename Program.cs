@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SpaceCare.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,8 @@ var connectionString = builder.Configuration.GetConnectionString("OracleConnecti
 builder.Services.AddDbContext<SpaceCare.Infra.Data.AppDbContext>(options =>
     options.UseOracle(connectionString));
 
-builder.Services.AddScoped<SpaceCare.Services.TuristaService>();
+builder.Services.AddScoped<TuristaService>();
+builder.Services.AddScoped<TelemetriaService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -14,7 +14,7 @@ namespace SpaceCare.Services
             _context = context;
         }
 
-        public async Task<Turista> CadastrarTurista(CadastroTuristaDto dados)
+        public async Task<DetalharTurista> CadastrarTurista(CadastrarTurista dados)
         {
             var turista = new Turista
             {
@@ -29,7 +29,16 @@ namespace SpaceCare.Services
 
             _context.Turistas.Add(turista);
             await _context.SaveChangesAsync();
-            return turista;
+
+            return new DetalharTurista(
+                turista.Id,
+                turista.Nome,
+                turista.PassaporteEspacial,
+                turista.DataNascimento,
+                turista.Email,
+                turista.HistoricoMedico,
+                turista.DataCadastro
+            );
         }
 
         public async Task<List<ListagemTurista>> ListarTuristas()
@@ -46,13 +55,13 @@ namespace SpaceCare.Services
             if (turista == null) return null;
 
             return new DetalharTurista(
-                Id: turista.Id,
-                Nome: turista.Nome,
-                PassaporteEspacial: turista.PassaporteEspacial,
-                DataNascimento: turista.DataNascimento,
-                Email: turista.Email,
-                HistoricoMedico: turista.HistoricoMedico,
-                DataCadastro: turista.DataCadastro
+                turista.Id,
+                turista.Nome,
+                turista.PassaporteEspacial,
+                turista.DataNascimento,
+                turista.Email,
+                turista.HistoricoMedico,
+                turista.DataCadastro
             );
         }
 
