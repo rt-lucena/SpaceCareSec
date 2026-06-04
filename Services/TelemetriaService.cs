@@ -62,5 +62,22 @@ namespace SpaceCare.Services
                 ))
                 .ToListAsync();
         }
+
+        public async Task<List<DetalharTelemetria>> ListarTodasTelemetrias()
+        {
+            return await _context.Telemetrias
+                .Include(t => t.Turista)
+                .Where(t => t.Turista!.Ativo == "1") 
+                .OrderByDescending(t => t.DataLeitura)
+                .Select(t => new DetalharTelemetria(
+                    t.Id,
+                    t.TuristaId,
+                    t.BatimentosCardiacos,
+                    t.TemperaturaCorporal,
+                    t.PressaoArterial,
+                    t.DataLeitura
+                ))
+                .ToListAsync();
+        }
     }
 }

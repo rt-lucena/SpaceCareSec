@@ -36,5 +36,12 @@ namespace SpaceCare.Controllers
 
             return Ok(historico);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ListarTodas()
+        {
+            var telemetrias = await _service.ListarTodasTelemetrias();
+            return Ok(telemetrias);
+        }
     }
 }
