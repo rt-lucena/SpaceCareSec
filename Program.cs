@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SpaceCare.Infra.MIddleware;
 using SpaceCare.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseMiddleware<TratadorGlobalErros>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -37,10 +39,9 @@ app.UseAuthorization();
 app.MapControllers();
 
 // ENDPOINT DE TESTE DE CONEXÃO COM BANCO FIAP
-app.MapGet("/api/teste-conexao", (IConfiguration configuration) =>
+app.MapGet("/teste-conexao", (IConfiguration configuration) =>
 {
     var connectionString = configuration.GetConnectionString("OracleConnection");
-    
     using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(connectionString);
     
     try
