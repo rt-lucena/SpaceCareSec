@@ -73,7 +73,7 @@ namespace SpaceCare.Services
         /// <param name="id">O identificador único do turista</param>
         /// <returns>O registro <see cref="DetalharTurista"/> preenchido com os dados do banco</returns>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID informado não exista.</exception>
-        public async Task<DetalharTurista?> DetalharTurista(int id)
+        public async Task<DetalharTurista> DetalharTurista(int id)
         {
             var turista = await _context.Turistas
                 .FirstOrDefaultAsync(t => t.Id == id && t.Ativo == "1")
@@ -96,7 +96,7 @@ namespace SpaceCare.Services
         /// <param name="dados">Contrato contendo o ID do registro alvo e os campos modificados.</param>
         /// <returns>O registro <see cref="DetalharTurista"/> atualizado refletindo o novo estado no banco</returns>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID informado não exista.</exception>
-        public async Task<DetalharTurista?> AtualizarTurista(AtualizarTurista dados)
+        public async Task<DetalharTurista> AtualizarTurista(AtualizarTurista dados)
         {
             var turista = await _context.Turistas
                 .FirstOrDefaultAsync(t => t.Id == dados.Id && t.Ativo == "1")

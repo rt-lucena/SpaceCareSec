@@ -55,6 +55,11 @@ namespace SpaceCare.Infra.MIddleware
                 statusCode = HttpStatusCode.NotFound;
                 mensagemResponse = excecao.Message;
             }
+            else if (excecao is ArgumentException)
+            {
+                statusCode = HttpStatusCode.BadRequest;
+                mensagemResponse = excecao.Message;
+            }
 
             context.Response.StatusCode = (int)statusCode;
 
