@@ -15,6 +15,7 @@ builder.Services.AddDbContext<SpaceCare.Infra.Data.AppDbContext>(options =>
 
 builder.Services.AddScoped<TuristaService>();
 builder.Services.AddScoped<TelemetriaService>();
+builder.Services.AddScoped<ComportamentoService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
