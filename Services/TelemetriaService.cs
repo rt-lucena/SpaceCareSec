@@ -3,13 +3,14 @@ using SpaceCare.Domain.Telemetrias.Dtos;
 using SpaceCare.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using SpaceCare.Domain.Exceptions;
+using SpaceCare.Domain.Telemetrias.Interfaces;
 
 namespace SpaceCare.Services
 {
     /// <summary>
     /// Service responsável por gerenciar as operações relacionadas às telemetrias dos Turistas Espaciais.
     /// </summary>
-    public class TelemetriaService
+    public class TelemetriaService : ITelemetriaService
     {
         private readonly AppDbContext _context;
 
@@ -22,11 +23,7 @@ namespace SpaceCare.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Cadastra uma nova leitura de telemetria a um turista espacial ativo.
-        /// </summary>
-        /// <param name="dados">Contrato contendo as aferições dos sinais vitais capturados pelos sensores.</param>
-        /// <returns>Um <see cref="DetalharTelemetria"/> preenchido com os dados e o ID persistido.</returns>
+        /// <inheritdoc/>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID do turista informado não exista.</exception>
         /// <exception cref="ArgumentException">Disparada caso a descrição da pressão arterial não contenha o caractere delimitador '/'.</exception>
         public async Task<DetalharTelemetria> CadastrarTelemetria(CadastrarTelemetria dados)
@@ -60,11 +57,7 @@ namespace SpaceCare.Services
             );
         }
 
-        /// <summary>
-        /// Lista o histórico de telemetrias de um turista espacial específico.
-        /// </summary>
-        /// <param name="turistaId">O identificador único do turista alvo da pesquisa.</param>
-        /// <returns>Uma lista ordenada de forma decrescente por data contendo os registros <see cref="DetalharTelemetria"/>.</returns>
+        /// <inheritdoc/>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID do turista informado não exista.</exception>
         public async Task<List<DetalharTelemetria>> ListarHistoricoPorTurista(int turistaId)
         {
@@ -86,10 +79,7 @@ namespace SpaceCare.Services
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Lista o histórico de telemetrias de todos os turistas espaciais ativos.
-        /// </summary>
-        /// <returns>Uma lista ordenada de forma decrescente por data contendo os registros <see cref="DetalharTelemetria"/>.</returns>
+        /// <inheritdoc/>
         public async Task<List<DetalharTelemetria>> ListarTodasTelemetrias()
         {
             return await _context.Telemetrias

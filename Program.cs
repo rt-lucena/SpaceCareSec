@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using SpaceCare.Domain.Comportamentos.Interfaces;
+using SpaceCare.Domain.Telemetrias.Interfaces;
+using SpaceCare.Domain.Turistas.Interfaces;
 using SpaceCare.Infra.MIddleware;
 using SpaceCare.Services;
 
@@ -14,9 +17,9 @@ var connectionString = builder.Configuration.GetConnectionString("OracleConnecti
 builder.Services.AddDbContext<SpaceCare.Infra.Data.AppDbContext>(options =>
     options.UseOracle(connectionString));
 
-builder.Services.AddScoped<TuristaService>();
-builder.Services.AddScoped<TelemetriaService>();
-builder.Services.AddScoped<ComportamentoService>();
+builder.Services.AddScoped<ITuristaService, TuristaService>();
+builder.Services.AddScoped<ITelemetriaService, TelemetriaService>();
+builder.Services.AddScoped<IComportamentoService, ComportamentoService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

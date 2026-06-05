@@ -3,6 +3,7 @@ using SpaceCare.Domain.Turistas.Dtos;
 using SpaceCare.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using SpaceCare.Domain.Exceptions;
+using SpaceCare.Domain.Turistas.Interfaces;
 
 namespace SpaceCare.Services
 {
@@ -10,7 +11,7 @@ namespace SpaceCare.Services
     /// Service responsável por gerenciar as operações relacionadas aos Turistas Espaciais,
     /// incluindo cadastro, listagem, detalhamento, atualização e exclusão lógica.
     /// </summary>
-    public class TuristaService
+    public class TuristaService : ITuristaService
     {
         private readonly AppDbContext _context;
 
@@ -23,11 +24,7 @@ namespace SpaceCare.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Cadastra um novo turista espacial no sistema, salvando suas informações no banco de dados.
-        /// </summary>
-        /// <param name="dados">Objeto contendo os dados necessários para o cadastro.</param>
-        /// <returns>Um <see cref="DetalharTurista"/> contendo os dados do registro criado e o ID persistido.</returns>
+        /// <inheritdoc/>
         public async Task<DetalharTurista> CadastrarTurista(CadastrarTurista dados)
         {
             var turista = new Turista
@@ -55,10 +52,7 @@ namespace SpaceCare.Services
             );
         }
 
-        /// <summary>
-        /// Lista resumidamente informações de todos os turistas espaciais ativos no sistema.
-        /// </summary>
-        /// <returns>Uma lista contendo registros do tipo <see cref="ListagemTurista"/>.</returns>
+        /// <inheritdoc/>
         public async Task<List<ListagemTurista>> ListarTuristas()
         {
             return await _context.Turistas
@@ -67,11 +61,7 @@ namespace SpaceCare.Services
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Obtém as informações completas de um turista espacial específico, caso esteja ativo.
-        /// </summary>
-        /// <param name="id">O identificador único do turista</param>
-        /// <returns>O registro <see cref="DetalharTurista"/> preenchido com os dados do banco</returns>
+        /// <inheritdoc/>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID informado não exista.</exception>
         public async Task<DetalharTurista> DetalharTurista(int id)
         {
@@ -90,11 +80,7 @@ namespace SpaceCare.Services
             );
         }
 
-        /// <summary>
-        /// Atualiza as informações de um turista espacial existente, permitindo a modificação de campos específicos.
-        /// </summary>
-        /// <param name="dados">Contrato contendo o ID do registro alvo e os campos modificados.</param>
-        /// <returns>O registro <see cref="DetalharTurista"/> atualizado refletindo o novo estado no banco</returns>
+        /// <inheritdoc/>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID informado não exista.</exception>
         public async Task<DetalharTurista> AtualizarTurista(AtualizarTurista dados)
         {
@@ -127,11 +113,7 @@ namespace SpaceCare.Services
             );
         }
 
-        /// <summary>
-        /// Realiza a exclusão lógica de um turista espacial, marcando seu registro como inativo no banco de dados.
-        /// </summary>
-        /// <param name="id">O identificador único do turista</param>
-        /// <returns>Uma <see cref="Task"/> representando a conclusão assíncrona da operação.</returns>
+        /// <inheritdoc/>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID informado não exista ou já tenha sido excluído.</exception>
         public async Task ExcluirTurista(int id)
         {

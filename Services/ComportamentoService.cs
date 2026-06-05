@@ -2,6 +2,7 @@
 using SpaceCare.Domain.Comportamentos;
 using SpaceCare.Domain.Comportamentos.Dtos;
 using SpaceCare.Domain.Comportamentos.Enums;
+using SpaceCare.Domain.Comportamentos.Interfaces;
 using SpaceCare.Domain.Exceptions;
 using SpaceCare.Infra.Data;
 
@@ -10,7 +11,7 @@ namespace SpaceCare.Services
     /// <summary>
     /// Service responsável por gerenciar as operações relacionadas aos comportamentos detectados dos Turistas Espaciais.
     /// </summary>
-    public class ComportamentoService
+    public class ComportamentoService : IComportamentoService
     {
         private readonly AppDbContext _context;
 
@@ -23,12 +24,7 @@ namespace SpaceCare.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Registra um novo comportamento detectado para um turista específico, 
-        /// avaliando o nível de alerta com base no gesto detectado e nas últimas telemetrias disponíveis.
-        /// </summary>
-        /// <param name="dados">Contrato com as informações obrigatórias para registro do comportamento.</param>
-        /// <returns>Os dados consolidados do comportamento registrado e seu respectivo nível de triagem.</returns>
+        /// <inheritdoc/>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID do turista informado não exista.</exception>
         public async Task<DetalharComportamento> CadastrarComportamentoAsync(CadastrarComportamento dados)
         {
@@ -111,11 +107,7 @@ namespace SpaceCare.Services
             );
         }
 
-        /// <summary>
-        /// Lista os comportamentos detectados para um turista específico, ordenados da leitura mais recente para a mais antiga.
-        /// </summary>
-        /// <param name="turistaId">O identificador único do turista alvo da pesquisa.</param>
-        /// <returns>Uma lista ordenada de forma decrescente por data contendo os registros <see cref="DetalharComportamento"/>.</returns>
+        /// <inheritdoc/>
         /// <exception cref="TuristaNotFoundException">Disparada caso o ID do turista informado não exista.</exception>
         public async Task<List<DetalharComportamento>> ListarComportamentosPorTurista(int turistaId)
         {
@@ -137,10 +129,7 @@ namespace SpaceCare.Services
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Lista o histórico de comportamentos de todos os turistas espaciais ativos.
-        /// </summary>
-        /// <returns>Uma lista ordenada de forma decrescente por data contendo os registros <see cref="DetalharComportamento"/>.</returns>
+        /// <inheritdoc/>
         public async Task<List<DetalharComportamento>> ListarTodosAsync()
         {
             return await _context.Comportamentos

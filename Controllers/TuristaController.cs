@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SpaceCare.Domain.Turistas.Dtos;
-using SpaceCare.Services;
+using SpaceCare.Domain.Turistas.Interfaces;
 
 namespace SpaceCare.Controllers
 {
@@ -12,13 +12,13 @@ namespace SpaceCare.Controllers
     [Route("turistas")]
     public class TuristaController : ControllerBase
     {
-        private readonly TuristaService _service;
+        private readonly ITuristaService _service;
 
         /// <summary>
         /// Inicializa uma nova instância do <see cref="TuristaController"/>.
         /// </summary>
         /// <param name="service">O serviço de domínio dos turistas injetado.</param>
-        public TuristaController(TuristaService service)
+        public TuristaController(ITuristaService service)
         {
             _service = service;
         }

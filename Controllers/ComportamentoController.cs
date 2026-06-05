@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SpaceCare.Domain.Comportamentos.Dtos;
-using SpaceCare.Services;
+using SpaceCare.Domain.Comportamentos.Interfaces;
 
 namespace SpaceCare.Controllers
 {
@@ -11,13 +11,13 @@ namespace SpaceCare.Controllers
     [Route("comportamentos")]
     public class ComportamentoController : ControllerBase
     {
-        private readonly ComportamentoService _service;
+        private readonly IComportamentoService _service;
 
         /// <summary>
         /// Inicializa uma nova instância do <see cref="ComportamentoController"/>.
         /// </summary>
         /// <param name="service">O serviço de domínio de comportamentos injetado.</param>
-        public ComportamentoController(ComportamentoService service)
+        public ComportamentoController(IComportamentoService service)
         {
             _service = service;
         }

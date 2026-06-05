@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SpaceCare.Domain.Telemetrias.Dtos;
-using SpaceCare.Services;
+using SpaceCare.Domain.Telemetrias.Interfaces;
 
 namespace SpaceCare.Controllers
 {
@@ -11,13 +11,13 @@ namespace SpaceCare.Controllers
     [Route("telemetrias")]
     public class TelemetriaController : ControllerBase
     {
-        private readonly TelemetriaService _service;
+        private readonly ITelemetriaService _service;
 
         /// <summary>
         /// Inicializa uma nova instância do <see cref="TelemetriaController"/>.
         /// </summary>
         /// <param name="service">O serviço de domínio de telemetrias injetado.</param>
-        public TelemetriaController(TelemetriaService service)
+        public TelemetriaController(ITelemetriaService service)
         {
             _service = service;
         }
