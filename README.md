@@ -1,134 +1,161 @@
-# SpaceCare — Sistema Integrado de Monitoramento de Saúde para Turismo Espacial
+# SpaceCare Security Edition
 
-## Índice
-
-| [Motivação](#motivação-do-projeto) | [Integrantes](#integrantes--3espg) | [Integração](#integração-com-o-projeto) | [Tecnologias](#estruturas-arquitetura-e-tecnologias) | [Endpoints](#endpoints-da-api) | [Como Executar](#como-executar-o-projeto) | [Evidências](#evidências-de-execução) |
-
-## Motivação do Projeto
-
-O **SpaceCare** nasce como uma solução de telemedicina preventiva de alto escalão. A principal motivação é **salvar vidas por meio da antecipação de problemas**. Sensores isolados de IoT podem falhar ou gerar falsos positivos; por isso, nossa plataforma inova ao criar um ecossistema de **Inteligência Biométrica Cruzada**. Ao cruzar os dados vitais contínuos do passageiro com as reações físicas e gestos voluntários ou involuntários que ele esboça no ambiente, a equipe médica remota na Terra ganha uma precisão cirúrgica para triagem, diagnóstico e acionamento de alertas de emergência em tempo real.
+API .NET para monitoramento de saúde em turismo espacial com foco na proteção de dados médicos através de criptografia AES-256-GCM.
 
 ---
 
-## Integrantes — 3ESPG
-* João Victor Soave **(RM557595)**
-* Maria Alice Freitas Araújo **(RM557516)**
-* Pedro Henrique Mendes dos Santos **(RM555332)**
-* Rafael Teofilo Lucena	**(RM555600)**
-* Vinicius Fernandes Tavares Bittencourt **(RM558909)**
+# Contexto do Projeto
+
+Este repositório é uma evolução (*fork*) do projeto original **SpaceCare**, desenvolvido para a disciplina de Engenharia de Software.
+
+Enquanto a versão original tinha foco na construção da API, persistência em Oracle Database e integração com telemetria IoT e IoB, esta versão foi criada para a disciplina de **Cibersegurança**, concentrando-se exclusivamente na implementação e validação de mecanismos de proteção de dados sensíveis.
 
 ---
 
-## Integração com o Projeto
-A API REST desenvolvida em C# (.NET) atua como o cérebro centralizador e unificado da operação, recebendo informações simultâneas de dois canais digitais distintos:
+# Arquitetura
 
-1. **Canal IoT Físico (Internet of Things):** Um hardware embarcado (baseado no microcontrolador ESP32) coleta continuamente os batimentos cardíacos e a temperatura corporal do turista através do traje espacial, transmitindo esses pacotes para a API por meio de requisições HTTP POST.
-2. **Canal IoB Visual (Internet of Behaviors):** Câmeras internas de monitoramento capturam as expressões e movimentos do usuário. A biblioteca **MediaPipe** decodifica visualmente esses gestos médicos (ex: mão no peito, mão na cabeça). O software então envia imediatamente o gesto interpretado para a nossa API.
+```text
+SpaceCare/
+├── Controllers/
+├── Domain/
+├── Services/
+├── Infra/
+├── Migrations/
+├── Docs/Images/
+├── Program.cs
+└── README.md
+```
 
-### Inteligência Biométrica Cruzada (Regras de Negócio)
-Ao receber um comportamento IoB, o `ComportamentoService` busca no banco de dados a telemetria IoT mais recente do respectivo turista para contextualizar o quadro médico:
-* Se o turista fizer o gesto de **Mão no Peito** e a última telemetria acusar **Batimentos >= 140 bpm** ou **Pressão Arterial >= 140 mmHg**, o sistema infere automaticamente um **Alerta Vermelho** (Risco Cardíaco Crítico).
-* Se o turista colocar a **Mão na Cabeça** e a telemetria apontar **Temperatura >= 38°C** ou oscilações graves de pressão, gera-se um **Alerta Vermelho** (Risco Neurológico/Térmico).
-* Caso os gestos sejam detectados sem alterações nos sinais vitais do IoT, o sistema estabiliza o quadro em **Alerta Amarelo** (Atenção Preventiva).
+### Principais Tecnologias
 
----
-
-## Estruturas, Arquitetura e Tecnologias
-
-### Modelagem de Domínio & POO
-O projeto utiliza os conceitos de Programação Orientada a Objetos para isolar o domínio das regras de infraestrutura. As entidades fundamentais (`Turista`, `Telemetria`, `Comportamento`) possuem forte encapsulamento e propriedades fortemente tipadas, mapeando as regras de negócio.
-
-### Abstração, Interfaces e Injeção de Dependência (DI)
-Seguindo os princípios do **SOLID**, todas as camadas de serviço foram desacopladas de seus controladores através de contratos puros (Interfaces), localizadas dentro do próprio domínio:
-* `ITuristaService` ➔ `TuristaService`
-* `ITelemetriaService` ➔ `TelemetriaService`
-* `IComportamentoService` ➔ `ComportamentoService`
-
-Os controladores dependem estritamente das interfaces, garantindo testabilidade e inversão de controle gerenciada nativamente no conteiner do .NET.
-
-### Tratamento Global de Exceções (Middleware)
-Desenvolvemos o `TratadorGlobalErros` (um Middleware customizado) no pipeline do ASP.NET Core. Ele intercepta as requisições e trata exceções semânticas de negócio:
-* **`TuristaNotFoundException`:** Mapeia e responde automaticamente um HTTP **404 Not Found** com o JSON padronizado.
-* **`ArgumentException`:** Captura falhas de regras de entrada (como o formato da pressão arterial) e responde um HTTP **400 Bad Request**.
-
-### Estruturas Auxiliares — DTOs via C# Records
-Para a segurança do tráfego de rede, a API separa os modelos de banco de dados das estruturas de payload:
-* **DTOs de Entrada (`Cadastrar...`):** Classes tradicionais com Data Annotations rígidas de validação (`[Required]`, `[Range]`, `[EnumDataType]`).
-* **DTOs de Saída (`Detalhar...`):** Estruturados como **C# Records posicionais imutáveis**, blindando os dados contra mutações pós-leitura.
-
-### Persistência e Conexão com Banco de Dados
-Mapeamento Relacional (ORM) operando com o **Entity Framework Core**, utilizando atributos explícitos (`[Table]`, `[Column]`) para persistir, atualizar e ler dados diretamente de tabelas corporativas hospedadas em um banco **Oracle Database**.
-
-### Deleção Lógica
-A API implementa o padrão de exclusão lógica (Soft Delete) no campo `FL_ATIVO` (`Ativo = "1"` ou `"0"`). Um turista deletado nunca tem seus registros expurgados fisicamente, protegendo o histórico médico e bloqueando novas telemetrias para contas inativas.
+* ASP.NET Core (.NET)
+* Entity Framework Core
+* Oracle Database
+* Arquitetura em Camadas
+* DTOs e Records
+* Dependency Injection
+* Middleware Global de Exceções
 
 ---
 
-## Endpoints da API
+# Segurança Implementada
 
-### Turistas (`/turistas`)
-* `POST /turistas` — Cadastra um novo perfil de turista espacial.
-* `GET /turistas` — Retorna a listagem simplificada de todos os turistas ativos.
-* `GET /turistas/{id}` — Detalha o perfil completo e histórico de um turista por ID.
-* `PUT /turistas` — Atualiza os dados cadastrais (Nome, Passaporte, Email, Histórico Médico).
-* `DELETE /turistas/{id}` — Desativa logicamente o turista da plataforma (Soft Delete).
+## MedicalCryptoService
 
-### Telemetrias IoT (`/telemetrias`)
-* `POST /telemetrias` — Recebe e valida dados vitais (Batimentos, Temperatura, Pressão Arterial).
-* `GET /telemetrias` — Retorna o painel geral de telemetrias capturadas de turistas ativos.
-* `GET /telemetrias/turista/{turistaId}` — Exibe a linha do tempo cronológica de telemetrias de um passageiro específico.
+A camada de segurança foi implementada através do `MedicalCryptoService`, responsável pela criptografia e descriptografia de dados médicos.
 
-### Comportamentos IoB (`/comportamentos`)
-* `POST /comportamentos` — Registra um gesto (`0=Polegar Cima`, `1=Polegar Baixo`, `2=Mão Cabeça`, `3=Mão Peito`), processa a triagem de alerta e salva o resultado.
-* `GET /comportamentos` — Lista o histórico geral de análises de comportamento da tripulação.
-* `GET /comportamentos/turista/{turistaId}` — Retorna o histórico de alertas e gestos de um único turista.
+### Características
+
+* AES-256-GCM
+* Nonce de 96 bits
+* Authentication Tag de 128 bits
+* Geração criptograficamente segura de Nonces
+* Chaves carregadas por configuração ou variável de ambiente
+
+O formato do dado protegido é:
+
+```text
+BASE64_NONCE:BASE64_CIPHERTEXT:BASE64_TAG
+```
+
+Exemplo:
+
+```text
+vSLEiiV3gjWUt8hy:mHYh2JZjjV1aeA3E1Q==:E9Zw2M41c7Z/GIoOM39WkQ==
+```
 
 ---
 
-## Como Executar o Projeto
+# Demonstração de Segurança
 
-### 1. Configurando o `appsettings.Development.json`
-Abra o arquivo `appsettings.Development.json` localizado na raiz do projeto e altere a string de conexão para apontar para as credenciais do seu banco Oracle:
+Foi criado um endpoint específico para validar o funcionamento completo da criptografia implementada no sistema.
+
+## Endpoint
+
+```http
+GET /teste-crypto
+```
+
+## Teste via Swagger
+
+1. Executar a aplicação:
+
+```bash
+dotnet run
+```
+
+2. Abrir a interface Swagger:
+
+```text
+https://localhost:<porta>/swagger
+```
+
+3. Executar o endpoint:
+
+```http
+GET /teste-crypto
+```
+
+4. Resultado obtido:
+
+![testeCrypto](./Docs/Images/testeCrypto.png)
+
+
+
+## O que a demonstração comprova
+
+* Criptografia AES-256-GCM funcional;
+* Geração de Nonce aleatório;
+* Geração de Authentication Tag;
+* Confidencialidade dos dados;
+* Integridade da informação protegida;
+* Recuperação correta do valor original após a descriptografia.
+
+
+---
+
+# Como Executar
+
+## Configurar Banco Oracle
 
 ```json
-"ConnectionStrings": {
-  "OracleConnection": "Data Source=URL_BANCO;User Id=USUARIO;Password=SENHA;"
+{
+  "ConnectionStrings": {
+    "OracleConnection": "Data Source=SERVIDOR;User Id=USUARIO;Password=SENHA;"
+  }
 }
 ```
 
-### 2. Executando no terminal
-```bash
-# Restaura os pacotes e dependências NuGet do SpaceCare
-dotnet restore
+## Configurar Chave AES
 
-# Compila a aplicação e inicia o servidor
-dotnet run --launch-profile "Development"
+```json
+{
+  "Crypto": {
+    "AesKey": "CHAVE_HEXADECIMAL_256_BITS"
+  }
+}
+```
+
+## Executar
+
+```bash
+dotnet restore
+dotnet ef database update
+dotnet run
 ```
 
 ---
 
-## Evidências de Execução
+# Integrantes — 3ESPG
 
-### 1. Endpoints Turistas
+* João Victor Soave (RM557595)
+* Maria Alice Freitas Araújo (RM557516)
+* Pedro Henrique Mendes dos Santos (RM555332)
+* Rafael Teofilo Lucena (RM555600)
+* Vinicius Fernandes Tavares Bittencourt (RM558909)
 
-| **Cadastrar** | **Listar** | **Deletar** |
-| :---: | :---: | :---: |
-| ![cadastrarTurista](./Docs/Images/cadastrarTurista.png) | ![listarTurista](./Docs/Images/listarTurista.png) | ![deletarTurista](./Docs/Images/deletarTurista.png) |
+---
 
-### 2. Endpoints Telemetrias
+# Conclusão
 
-| **Cadastrar**  | **Listar** |
-| :---: | :---: |
-| ![cadastrarTelemetria](./Docs/Images/cadastrarTelemetria.png) | ![listarTelemetria](./Docs/Images/listarTelemetria.png) |
-
-### 3. Endpoints Comportamentos
-
-| **Cadastrar** | **Listar** |
-| :---: | :---: |
-| ![cadastrarComportamento](./Docs/Images/cadastrarComportamento.png) | ![listarComportamento](./Docs/Images/listarComportamento.png) |
-
-### 4. Retorno Erros
-
-| **Conflito** | **Turista Inexistente** |
-| :---: | :---: |
-| ![erroConflito](./Docs/Images/erroConflito.png) | ![erroTuristaInexistente](./Docs/Images/erroTuristaInexistente.png) |
+Esta versão do SpaceCare demonstra a aplicação prática de criptografia autenticada AES-256-GCM para proteção de dados médicos em um ambiente de turismo espacial, validando conceitos fundamentais de confidencialidade, integridade e autenticação exigidos em sistemas críticos.
