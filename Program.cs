@@ -20,6 +20,7 @@ builder.Services.AddDbContext<SpaceCare.Infra.Data.AppDbContext>(options =>
 builder.Services.AddScoped<ITuristaService, TuristaService>();
 builder.Services.AddScoped<ITelemetriaService, TelemetriaService>();
 builder.Services.AddScoped<IComportamentoService, ComportamentoService>();
+builder.Services.AddScoped<MedicalCryptoService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -41,25 +42,21 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// ENDPOINT DE TESTE DE CONEXÃO COM BANCO FIAP
-app.MapGet("/teste-conexao", (IConfiguration configuration) =>
+
+app.MapGet("/teste-crypto", (MedicalCryptoService crypto) =>
 {
-    var connectionString = configuration.GetConnectionString("OracleConnection");
-    using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(connectionString);
-    
-    try
+    var textoOriginal = "PASSAPORTE123";
+
+    var textoCriptografado = crypto.Encrypt(textoOriginal);
+
+    var textoDescriptografado = crypto.Decrypt(textoCriptografado);
+
+    return Results.Ok(new
     {
-        connection.Open();
-        return Results.Ok(new { status = "Sucesso", mensagem = "Conexão com o Oracle da FIAP realizada com êxito!" });
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem($"Falha ao conectar no Oracle: {ex.Message}");
-    }
-    finally
-    {
-        connection.Close();
-    }
+        Original = textoOriginal,
+        Criptografado = textoCriptografado,
+        Descriptografado = textoDescriptografado
+    });
 });
 
 app.Run();
