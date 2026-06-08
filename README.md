@@ -116,31 +116,7 @@ GET /teste-crypto
 
 # Como Executar
 
-## Configurar Banco Oracle
-
-```json
-{
-  "ConnectionStrings": {
-    "OracleConnection": "Data Source=SERVIDOR;User Id=USUARIO;Password=SENHA;"
-  }
-}
-```
-
-## Configurar Chave AES
-
-```json
-{
-  "Crypto": {
-    "AesKey": "CHAVE_HEXADECIMAL_256_BITS"
-  }
-}
-```
-
-## Executar
-
 ```bash
-dotnet restore
-dotnet ef database update
 dotnet run
 ```
 
